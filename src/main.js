@@ -17,3 +17,19 @@ document.getElementById("next-day").addEventListener("click", () => {
 document.getElementById("clean").addEventListener("click", () => {
   dispatch({ type: "CLEAN" });
 });
+
+document.getElementById("price-coffee").addEventListener("change", e => {
+  dispatch({
+    type: "SET_PRICE",
+    item: "coffee",
+    price: Number(e.target.value)
+  });
+});
+
+document.getElementById("price-bagel").addEventListener("change", e => {
+  dispatch({
+    type: "SET_PRICE",
+    item: "bagel",
+    price: Number(e.target.value)
+  });
+});

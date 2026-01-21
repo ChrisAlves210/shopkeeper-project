@@ -18,8 +18,18 @@ function renderInventory(state) {
   const inventory = document.getElementById("inventory");
   inventory.innerHTML = `
     <h2>Inventory</h2>
+
     <p>Coffee: ${state.inventory.coffee}</p>
+    <label>
+      Coffee Price (¢):
+      <input id="price-coffee" type="number" value="${state.prices.coffee}">
+    </label>
+
     <p>Bagels: ${state.inventory.bagel}</p>
+    <label>
+      Bagel Price (¢):
+      <input id="price-bagel" type="number" value="${state.prices.bagel}">
+    </label>
   `;
 }
 

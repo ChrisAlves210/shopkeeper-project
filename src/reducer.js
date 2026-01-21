@@ -17,5 +17,10 @@ export function update(state, action) {
     newState.log.push("You cleaned the shop.");
   }
 
+  if (action.type === "SET_PRICE") {
+    const { item, price } = action;
+    newState.prices[item] = price;
+  }
+
   return newState;
 }
