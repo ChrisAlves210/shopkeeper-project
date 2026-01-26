@@ -28,7 +28,7 @@ function renderInventory(state) {
 
     <p>Bagels: ${state.inventory.bagel}</p>
     <label>
-      Bagel Price (¢):
+      
       <input id="price-bagel" type="number" value="${state.prices.bagel}">
     </label>
   `;
