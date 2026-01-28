@@ -1,4 +1,4 @@
-export function simulateDay(state) {
+export default function simulateDay(state) {
   let revenue = 0;
 
   // Coffee sales
@@ -9,8 +9,8 @@ export function simulateDay(state) {
     coffeeSold = Math.min(1, state.inventory.coffee);
   }
 
-  state.inventory.coffee -= coffeeSold;
-  revenue += coffeeSold * state.prices.coffee;
+  const updatedInventoryCoffee = state.inventory.coffee - coffeeSold;
+  const updatedRevenueFromCoffee = coffeeSold * state.prices.coffee;
 
   // Bagel sales
   let bagelSold = 0;
@@ -20,13 +20,28 @@ export function simulateDay(state) {
     bagelSold = Math.min(1, state.inventory.bagel);
   }
 
-  state.inventory.bagel -= bagelSold;
-  revenue += bagelSold * state.prices.bagel;
+  const updatedInventoryBagel = state.inventory.bagel - bagelSold;
+  const updatedRevenueFromBagel = bagelSold * state.prices.bagel;
 
-  state.cashCents += revenue;
-  state.lastReport = {
+  revenue += updatedRevenueFromCoffee + updatedRevenueFromBagel;
+
+  const updatedCashCents = state.cashCents + revenue;
+
+  const updatedLastReport = {
     coffeeSold,
     bagelSold,
-    revenue
+    revenue,
+  };
+
+  // Return a new state object instead of mutating the parameter
+  return {
+    ...state,
+    cashCents: updatedCashCents,
+    inventory: {
+      ...state.inventory,
+      coffee: updatedInventoryCoffee,
+      bagel: updatedInventoryBagel,
+    },
+    lastReport: updatedLastReport,
   };
 }

@@ -1,6 +1,6 @@
-import { makeInitialState } from "./state.js";
-import { render } from "./render.js";
-import { update } from "./reducer.js";
+import makeInitialState from './state';
+import render from './render';
+import update from './reducer';
 
 let state = makeInitialState();
 render(state);
@@ -10,31 +10,30 @@ function dispatch(action) {
   render(state);
 }
 
-document.getElementById("next-day").addEventListener("click", () => {
-  dispatch({ type: "NEXT_DAY" });
+document.getElementById('next-day').addEventListener('click', () => {
+  dispatch({ type: 'NEXT_DAY' });
 });
 
-document.getElementById("clean").addEventListener("click", () => {
-  dispatch({ type: "CLEAN" });
+document.getElementById('clean').addEventListener('click', () => {
+  dispatch({ type: 'CLEAN' });
 });
 
-document.getElementById("price-coffee").addEventListener("change", e => {
+document.getElementById('price-coffee').addEventListener('change', (e) => {
   dispatch({
-    type: "SET_PRICE",
-    item: "coffee",
-    price: Number(e.target.value)
+    type: 'SET_PRICE',
+    item: 'coffee',
+    price: Number(e.target.value),
   });
 });
 
-document.getElementById("price-bagel").addEventListener("change", e => {
+document.getElementById('price-bagel').addEventListener('change', (e) => {
   dispatch({
-    type: "SET_PRICE",
-    item: "bagel",
-    price: Number(e.target.value)
+    type: 'SET_PRICE',
+    item: 'bagel',
+    price: Number(e.target.value),
   });
-
 });
 
-document.getElementById("open-shop").addEventListener("click", () => {
-  dispatch({ type: "OPEN_SHOP" });
+document.getElementById('open-shop').addEventListener('click', () => {
+  dispatch({ type: 'OPEN_SHOP' });
 });
