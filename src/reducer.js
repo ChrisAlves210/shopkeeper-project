@@ -9,9 +9,13 @@ export default function update(state, action) {
   if (action.type === 'OPEN_SHOP') {
     const event = randomEvent(newState);
     const updatedState = simulateDay(newState, event);
+    const rentCents = 200;
+    newState.cashCents -= rentCents;
+    newState.log.push(`Paid rent: $${(rentCents / 100).toFixed(2)}.`);
     Object.assign(newState, updatedState);
     newState.day += 1;
     newState.log.push('You opened the shop.');
+    newState.orderedToday = false;
   }
   if (action.type === 'NEXT_DAY') {
     newState.day += 1;

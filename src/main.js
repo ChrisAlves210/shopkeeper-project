@@ -45,3 +45,14 @@ document.getElementById('open-shop').addEventListener('click', () => {
 document.getElementById('promo').addEventListener('click', () => {
   dispatch({ type: 'PROMO' });
 });
+
+document.getElementById("order-button").addEventListener("click", () => {
+  const item = document.getElementById("order-item").value;
+  const qty = Number(document.getElementById("order-qty").value);
+
+  dispatch({
+    type: "ORDER_STOCK",
+    item,
+    qty
+  });
+});
