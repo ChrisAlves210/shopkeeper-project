@@ -78,5 +78,15 @@ export default function update(state, action) {
     newState.log.push(`Ordered ${qty} ${item}(s) for $${(totalCost / 100).toFixed(2)}.`);
 }
 
+  if (newState.cashCents < 0) {
+    newState.gameOver = true;
+    newState.log.push("You went bankrupt. Game over.");
+}
+
+  if (newState.day > 10 && newState.cashCents >= 6000) {
+    newState.gameOver = true;
+    newState.log.push("You ran a successful shop! You win!");
+}
+
   return newState;
 }

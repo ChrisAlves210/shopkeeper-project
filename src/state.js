@@ -23,5 +23,7 @@ export default function makeInitialState() {
 
     lastReport: null,
     log: ['Welcome to your new shop!'],
+
+    gameOver: false,
   };
 }
