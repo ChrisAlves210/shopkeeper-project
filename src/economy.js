@@ -80,8 +80,10 @@ export default function simulateDay(state, event = null) {
   const updatedCashCents = state.cashCents + revenue;
 
   const updatedLastReport = {
-    coffeeSold,
-    bagelSold,
+    soldByItem: {
+      coffee: coffeeSold,
+      bagel: bagelSold,
+    },
     revenue,
   };
 

@@ -10,11 +10,13 @@ export default function makeInitialState() {
     inventory: {
       coffee: 5,
       bagel: 5,
+      tea: 5,
     },
 
     prices: {
       coffee: 300, // cents
       bagel: 250,
+      tea: 275,
     },
 
     promoDaysLeft: 0,

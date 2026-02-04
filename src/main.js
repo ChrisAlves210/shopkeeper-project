@@ -1,7 +1,7 @@
 import makeInitialState from './state.js';
 import render from './render.js';
 import update from './reducer.js';
-import { saveState, loadState } from "./storage.js";
+import { saveState, loadState } from "../storage.js";
 
 let state = makeInitialState();
 render(state);
@@ -31,21 +31,16 @@ document.getElementById('clean').addEventListener('click', () => {
 const inventoryEl = document.getElementById('inventory');
 
 inventoryEl.addEventListener('change', (e) => {
-  if (e.target.id === 'price-coffee') {
-    dispatch({
-      type: 'SET_PRICE',
-      item: 'coffee',
-      price: Number(e.target.value),
-    });
-  }
+  if (!e.target.classList.contains('price-input')) return;
 
-  if (e.target.id === 'price-bagel') {
-    dispatch({
-      type: 'SET_PRICE',
-      item: 'bagel',
-      price: Number(e.target.value),
-    });
-  }
+  const item = e.target.dataset.item;
+  const price = Number(e.target.value);
+
+  dispatch({
+    type: 'SET_PRICE',
+    item,
+    price,
+  });
 });
 
 document.getElementById('open-shop').addEventListener('click', () => {
