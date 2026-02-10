@@ -1,93 +1,97 @@
+import { PRODUCTS } from './products.js';
+
 export default function simulateDay(state, event = null) {
   let revenue = 0;
 
-  // Cleanliness modifier
-  let cleanlinessModifier = 0;
-  if (state.cleanliness < 40) {
-    cleanlinessModifier = -1;
-  } else if (state.cleanliness > 70) {
-    cleanlinessModifier = 1;
-  }
+  // --- Day-level randomness ---
+  const dayRoll = Math.random();
+  let dayDemandMultiplier = 1;
 
-  // Coffee sales (demand)
-  let coffeeSold = 0;
-  if (state.prices.coffee <= 350) {
-    coffeeSold = 3;
+  if (dayRoll < 0.1) {
+    dayDemandMultiplier = 0.7; // 30% lower demand
+    state.log.push('Terrible day — almost no one came by (demand about 30% lower than usual).');
+  } else if (dayRoll < 0.3) {
+    dayDemandMultiplier = 0.85; // 15% lower demand
+    state.log.push('Slow day — fewer customers than usual (demand about 15% lower).');
+  } else if (dayRoll < 0.85) {
+    dayDemandMultiplier = 1.0;
+    state.log.push('Normal day — customer traffic was about average.');
   } else {
-    coffeeSold = 1;
+    dayDemandMultiplier = 1.25; // 25% higher demand
+    state.log.push('Great day — lunch rush was huge (demand about 25% higher than usual).');
   }
 
-  // Bagel sales (demand)
-  let bagelSold = 0;
-  if (state.prices.bagel <= 300) {
-    bagelSold = 2;
-  } else {
-    bagelSold = 1;
-  }
-
-  // Apply cleanliness, then clamp to [0, inventory]
-  coffeeSold = Math.max(0, coffeeSold + cleanlinessModifier);
-  coffeeSold = Math.min(coffeeSold, state.inventory.coffee);
-
-  bagelSold = Math.max(0, bagelSold + cleanlinessModifier);
-  bagelSold = Math.min(bagelSold, state.inventory.bagel);
-
-  // Apply promotion bonus
-  if (state.promoDaysLeft > 0) {
-    coffeeSold += 1;
-    bagelSold += 1;
-  }
-
-  // Apply event effects to demand
-  if (event?.demandBoost) {
-    coffeeSold += event.demandBoost;
-    bagelSold += event.demandBoost;
-  }
-
-  if (event?.noBagels) {
-    bagelSold = 0;
-  }
-
-   // Apply cleanliness boost event (helpful neighbor)
   let effectiveCleanliness = state.cleanliness;
-  if (event?.cleanlinessBoost) {
-    effectiveCleanliness += event.cleanlinessBoost;
+  if (event?.cleanlinessDelta) {
+    effectiveCleanliness += event.cleanlinessDelta;
   }
 
-  // Clamp again after promo and events
-  coffeeSold = Math.max(0, Math.min(coffeeSold, state.inventory.coffee));
-  bagelSold = Math.max(0, Math.min(bagelSold, state.inventory.bagel));
+  const updatedInventory = { ...state.inventory };
+  const soldByItem = {};
 
-  // Update inventory and revenue
-  let updatedInventoryCoffee = state.inventory.coffee - coffeeSold;
-  let updatedInventoryBagel = state.inventory.bagel - bagelSold;
+  let cleanlinessMultiplier = 1;
+  if (effectiveCleanliness < 40) {
+    cleanlinessMultiplier = 0.5;
+  } else if (effectiveCleanliness > 70) {
+    cleanlinessMultiplier = 1.5;
+  }
 
-  // Raccoon steals after sales
-  if (event?.steal) {
-    const stealCoffee = Math.random() < 0.5;
-    if (stealCoffee && updatedInventoryCoffee > 0) {
-      updatedInventoryCoffee -= 1;
-    } else if (!stealCoffee && updatedInventoryBagel > 0) {
-      updatedInventoryBagel -= 1;
+  const promoMultiplier = state.promoDaysLeft > 0 ? 1.5 : 1;
+
+  PRODUCTS.forEach((product) => {
+    const id = product.id;
+
+    let dailySales = product.baseDemand;
+
+    // Apply day-level randomness once for all products
+    dailySales *= dayDemandMultiplier;
+
+    // Apply cleanliness and promo effects
+    dailySales *= cleanlinessMultiplier;
+    dailySales *= promoMultiplier;
+
+    // multiplier
+    if (event?.demandMultiplier) {
+      dailySales *= event.demandMultiplier;
+    }
+
+    dailySales = Math.round(dailySales);
+
+    if (event?.disabledProducts && event.disabledProducts.includes(id)) {
+      dailySales = 0;
+    }
+
+    const available = updatedInventory[id] ?? 0;
+    dailySales = Math.max(0, Math.min(dailySales, available));
+
+    updatedInventory[id] = available - dailySales;
+
+    const priceCents = state.prices[id] ?? 0;
+    revenue += dailySales * priceCents;
+
+    soldByItem[id] = dailySales;
+  });
+
+  if (event?.stealQuantity) {
+    const candidates = PRODUCTS.filter((product) => (updatedInventory[product.id] ?? 0) > 0);
+    if (candidates.length > 0) {
+      for (let i = 0; i < event.stealQuantity; i += 1) {
+        const availableCandidates = PRODUCTS.filter((product) => (updatedInventory[product.id] ?? 0) > 0);
+        if (availableCandidates.length === 0) break;
+        const randomIndex = Math.floor(Math.random() * availableCandidates.length);
+        const stolenId = availableCandidates[randomIndex].id;
+        updatedInventory[stolenId] -= 1;
+      }
     }
   }
-
-  const updatedRevenueFromCoffee = coffeeSold * state.prices.coffee;
-  const updatedRevenueFromBagel = bagelSold * state.prices.bagel;
-
-  revenue += updatedRevenueFromCoffee + updatedRevenueFromBagel;
 
   const updatedCashCents = state.cashCents + revenue;
 
   const updatedLastReport = {
-    soldByItem: {
-      coffee: coffeeSold,
-      bagel: bagelSold,
-    },
+    soldByItem,
     revenue,
   };
 
-  // Decrement promo days left after a shop day
   let updatedPromoDaysLeft = state.promoDaysLeft;
   if (updatedPromoDaysLeft > 0) {
     updatedPromoDaysLeft -= 1;
@@ -99,8 +103,7 @@ export default function simulateDay(state, event = null) {
     promoDaysLeft: updatedPromoDaysLeft,
     inventory: {
       ...state.inventory,
-      coffee: updatedInventoryCoffee,
-      bagel: updatedInventoryBagel,
+      ...updatedInventory,
     },
     lastReport: updatedLastReport,
   };

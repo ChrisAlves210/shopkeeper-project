@@ -1,28 +1,59 @@
-export default function randomEvent(state) {
-  if (Math.random() > 0.3) return null;
+// Data-driven events: each event describes its chance and structured effects.
+const EVENTS = [
+  {
+    name: 'Tour bus arrives',
+    chance: 0.25,
+    description: 'Event: A tour bus arrives — lots of thirsty customers.',
+    effects: {
+      demandMultiplier: 1.3,
+    },
+  },
+  {
+    name: 'Raccoon steals food',
+    chance: 0.25,
+    description: 'Event: A raccoon sneaks in and steals some food.',
+    effects: {
+      stealQuantity: 1,
+    },
+  },
+  {
+    name: 'Helpful neighbor cleans',
+    chance: 0.25,
+    description: 'Event: A helpful neighbor tidies up the shop.',
+    effects: {
+      cleanlinessDelta: 10,
+    },
+  },
+  {
+    name: 'Bad weather for bagels',
+    chance: 0.25,
+    description: 'Event: Bad weather scares away bagel customers.',
+    effects: {
+      disabledProducts: ['bagel'],
+    },
+  },
+];
 
-  const roll = Math.floor(Math.random() * 4);
+// Roll for a single event each day (with an overall chance that any event happens).
+const BASE_EVENT_CHANCE = 0.3;
 
-  switch (roll) {
-    case 0:
-      state.log.push('A tour bus arrives!');
-      return { demandBoost: 1 };
+export default function randomEvent() {
+  const rollForAny = Math.random();
+  if (rollForAny > BASE_EVENT_CHANCE) return null;
 
-    case 1:
-      state.log.push('A raccoon steals some food!');
-      return { steal: true };
+  const roll = Math.random();
+  let cumulative = 0;
 
-    case 2:
-      state.log.push('A helpful neighbor cleans up.');
+  for (const event of EVENTS) {
+    cumulative += event.chance;
+    if (roll <= cumulative) {
       return {
-        cleanlinessBoost: 10,
+        name: event.name,
+        description: event.description,
+        ...event.effects,
       };
-
-    case 3:
-      state.log.push('Bad weather scares away bagel customers.');
-      return { noBagels: true };
-
-    default:
-      return null;
+    }
   }
+
+  return null;
 }

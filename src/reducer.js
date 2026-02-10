@@ -8,7 +8,11 @@ export default function update(state, action) {
   const newState = structuredClone(state);
 
   if (action.type === 'OPEN_SHOP') {
-    const event = randomEvent(newState);
+    const event = randomEvent();
+    if (event) {
+      newState.log.push(event.description);
+    }
+
     const updatedState = simulateDay(newState, event);
     const rentCents = 200;
     newState.cashCents -= rentCents;
