@@ -23,6 +23,13 @@ export default function makeInitialState() {
 
     orderedToday: false,
 
+  // Orders that have been placed but not yet delivered
+  // Each entry: { dayArrives, itemId, qty }
+  incomingOrders: [],
+
+  // Daily wholesale market multiplier (1.0 = normal prices)
+  marketMultiplier: 1.0,
+
     lastReport: null,
     log: ['Welcome to your new shop!'],
 

@@ -6,6 +6,10 @@ function renderStatus(state) {
     <h2>Status</h2>
     <p><strong>Day:</strong> ${state.day}</p>
     <p><strong>Cash:</strong> $${(state.cashCents / 100).toFixed(2)}</p>
+    <p><strong>Cleanliness:</strong> ${state.cleanliness}</p>
+    <p><strong>Promo days left:</strong> ${state.promoDaysLeft}</p>
+    <p><strong>Incoming orders:</strong> ${(state.incomingOrders || []).length}</p>
+    <p><strong>Market multiplier:</strong> ${state.marketMultiplier.toFixed ? state.marketMultiplier.toFixed(2) : state.marketMultiplier}</p>
   `;
 }
 
@@ -74,6 +78,21 @@ function renderOrderPanel(state) {
   ).join("");
 
   if (previous) select.value = previous;
+
+   // Show today's wholesale prices for each product
+  const pricesEl = document.getElementById("order-prices");
+  if (pricesEl) {
+    const rows = PRODUCTS.map(p => {
+      const base = p.wholesaleCents;
+      const current = Math.round(base * (state.marketMultiplier ?? 1.0));
+      return `<li>${p.name}: ${current}¢ (base ${base}¢)</li>`;
+    }).join("");
+
+    pricesEl.innerHTML = `
+      <h3>Today's wholesale prices</h3>
+      <ul>${rows}</ul>
+    `;
+  }
 
   const orderBtn = document.getElementById("order-button");
   if (orderBtn) {

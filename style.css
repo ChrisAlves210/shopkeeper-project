@@ -1,0 +1,150 @@
+/* Base layout */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.5;
+  color: #222;
+  background-color: #f4f4f8;
+}
+
+h1, h2, h3 {
+  margin-top: 0;
+  font-weight: 600;
+}
+
+h1 {
+  text-align: center;
+  padding: 1rem 0;
+  background: #1f2933;
+  color: #f9fafb;
+  margin-bottom: 1rem;
+}
+
+main,
+body {
+  display: block;
+}
+
+/* Page container */
+body {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 1rem 2rem;
+}
+
+section {
+  background: #47a2b8;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+#status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+#status p {
+  margin: 0.1rem 0;
+}
+
+/* Inventory & controls layout */
+#inventory,
+#controls,
+#orders {
+  font-size: 0.95rem;
+}
+
+#inventory .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid #fbbf24;
+}
+
+#inventory .row:last-child {
+  border-bottom: none;
+}
+
+#inventory label {
+  font-size: 0.85rem;
+}
+
+.price-input {
+  width: 5rem;
+  padding: 0.15rem 0.3rem;
+  font-size: 0.9rem;
+}
+
+/* Controls */
+#controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.5rem;
+}
+
+button {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 999px;
+  border: 1px solid #1d4ed8;
+  background-color: #ced1d6;
+  color: #d91111;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.05s ease;
+}
+
+button:hover:not(:disabled) {
+  background-color: #1d4ed8;
+}
+
+button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+button:disabled {
+  background-color: #4072a3;
+  border-color: #3c7dbe;
+  cursor: default;
+}
+
+/* Orders */
+#orders label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+#orders select,
+#orders input[type="number"] {
+  margin-left: 0.25rem;
+  padding: 0.15rem 0.3rem;
+  font-size: 0.9rem;
+}
+
+/* Report & log */
+#report p {
+  margin: 0.15rem 0;
+}
+
+#log ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+  margin: 0.5rem 0 0;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+#log li {
+  font-size: 0.9rem;
+  margin-bottom: 0.1rem;
+}

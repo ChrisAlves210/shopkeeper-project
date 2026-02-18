@@ -1,8 +1,9 @@
-// Data-driven events: each event describes its chance and structured effects.
+// Data-driven events: each event describes its weight and structured effects.
 const EVENTS = [
   {
     name: 'Tour bus arrives',
-    chance: 0.25,
+    // More common positive event
+    weight: 3,
     description: 'Event: A tour bus arrives — lots of thirsty customers.',
     effects: {
       demandMultiplier: 1.3,
@@ -10,7 +11,7 @@ const EVENTS = [
   },
   {
     name: 'Raccoon steals food',
-    chance: 0.25,
+    weight: 1,
     description: 'Event: A raccoon sneaks in and steals some food.',
     effects: {
       stealQuantity: 1,
@@ -18,7 +19,7 @@ const EVENTS = [
   },
   {
     name: 'Helpful neighbor cleans',
-    chance: 0.25,
+    weight: 2,
     description: 'Event: A helpful neighbor tidies up the shop.',
     effects: {
       cleanlinessDelta: 10,
@@ -26,7 +27,7 @@ const EVENTS = [
   },
   {
     name: 'Bad weather for bagels',
-    chance: 0.25,
+    weight: 1,
     description: 'Event: Bad weather scares away bagel customers.',
     effects: {
       disabledProducts: ['bagel'],
@@ -37,23 +38,32 @@ const EVENTS = [
 // Roll for a single event each day (with an overall chance that any event happens).
 const BASE_EVENT_CHANCE = 0.3;
 
-export default function randomEvent() {
-  const rollForAny = Math.random();
-  if (rollForAny > BASE_EVENT_CHANCE) return null;
+function pickWeightedEvent(events) {
+  const totalWeight = events.reduce((sum, ev) => sum + (ev.weight ?? 1), 0);
+  if (totalWeight <= 0) return null;
 
-  const roll = Math.random();
-  let cumulative = 0;
+  const roll = Math.random() * totalWeight;
+  let running = 0;
 
-  for (const event of EVENTS) {
-    cumulative += event.chance;
-    if (roll <= cumulative) {
-      return {
-        name: event.name,
-        description: event.description,
-        ...event.effects,
-      };
+  for (const event of events) {
+    running += event.weight ?? 1;
+    if (roll <= running) {
+      return event;
     }
   }
 
   return null;
+}
+
+export default function randomEvent() {
+  const rollForAny = Math.random();
+  if (rollForAny > BASE_EVENT_CHANCE) return null;
+  const picked = pickWeightedEvent(EVENTS);
+  if (!picked) return null;
+
+  return {
+    name: picked.name,
+    description: picked.description,
+    ...picked.effects,
+  };
 }

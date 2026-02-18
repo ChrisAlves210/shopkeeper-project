@@ -3,22 +3,22 @@ import { PRODUCTS } from './products.js';
 export default function simulateDay(state, event = null) {
   let revenue = 0;
 
-  // --- Day-level randomness ---
+  // --- Day-level randomness ooo scary ---
   const dayRoll = Math.random();
   let dayDemandMultiplier = 1;
 
   if (dayRoll < 0.1) {
-    dayDemandMultiplier = 0.7; // 30% lower demand
-    state.log.push('Terrible day — almost no one came by (demand about 30% lower than usual).');
+    dayDemandMultiplier = 0.7; // 30% lower demand to know
+    state.log.push('Very Terrible day — almost no one came by due to unforeseen circumstances (demand about 30% lower than usual).');
   } else if (dayRoll < 0.3) {
-    dayDemandMultiplier = 0.85; // 15% lower demand
-    state.log.push('Slow day — fewer customers than usual (demand about 15% lower).');
+    dayDemandMultiplier = 0.85; // 15% lower demand to know
+    state.log.push('So So day — fewer customers than usual  (demand about 15% lower).');
   } else if (dayRoll < 0.85) {
     dayDemandMultiplier = 1.0;
-    state.log.push('Normal day — customer traffic was about average.');
+    state.log.push('Nice day — customer traffic was about average but better than some days.');
   } else {
-    dayDemandMultiplier = 1.25; // 25% higher demand
-    state.log.push('Great day — lunch rush was huge (demand about 25% higher than usual).');
+    dayDemandMultiplier = 1.25; // 25% higher demand to know
+    state.log.push('Great day — lunch rush was huge and everyone was excited (demand about 25% higher than usual).');
   }
 
   let effectiveCleanliness = state.cleanliness;
@@ -39,7 +39,7 @@ export default function simulateDay(state, event = null) {
   const promoMultiplier = state.promoDaysLeft > 0 ? 1.5 : 1;
 
   PRODUCTS.forEach((product) => {
-    const id = product.id;
+    const { id } = product;
 
     let dailySales = product.baseDemand;
 
